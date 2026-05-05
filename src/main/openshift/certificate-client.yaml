@@ -1,0 +1,32 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: swim-ed254-client-cert
+spec:
+  secretName: swim-ed254-provider-validator-certs
+  duration: 2160h
+  renewBefore: 360h
+  commonName: swim-ed254-client
+  usages:
+    - client auth
+    - digital signature
+    - key encipherment
+  privateKey:
+    algorithm: RSA
+    encoding: PKCS8
+    size: 2048
+    rotationPolicy: Always
+  issuerRef:
+    name: swim-ca-issuer
+    kind: ClusterIssuer
+  keystores:
+    pkcs12:
+      create: true
+      passwordSecretRef:
+        name: swim-ed254-provider-validator-passwords
+        key: password
+    jks:
+      create: true
+      passwordSecretRef:
+        name: swim-ed254-provider-validator-passwords
+        key: password

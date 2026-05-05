@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: swim-ed254-provider-validator-data
+  labels:
+    app: swim-ed254-provider-validator
+    app.kubernetes.io/name: swim-ed254-provider-validator
+    app.kubernetes.io/component: ed254-provider-validator
+    app.kubernetes.io/part-of: swim-ed254
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi

@@ -1,0 +1,20 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: swim-ed254-provider-validator
+  labels:
+    app: swim-ed254-provider-validator
+    app.kubernetes.io/name: swim-ed254-provider-validator
+    app.kubernetes.io/component: ed254-provider-validator
+    app.kubernetes.io/part-of: swim-ed254
+spec:
+  to:
+    kind: Service
+    name: swim-ed254-provider-validator
+    weight: 100
+  port:
+    targetPort: http
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None

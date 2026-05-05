@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: swim-ed254-provider-validator
+  labels:
+    app: swim-ed254-provider-validator
+    app.kubernetes.io/name: swim-ed254-provider-validator
+    app.kubernetes.io/component: ed254-provider-validator
+    app.kubernetes.io/part-of: swim-ed254
+spec:
+  selector:
+    app: swim-ed254-provider-validator
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+      protocol: TCP
+  type: ClusterIP

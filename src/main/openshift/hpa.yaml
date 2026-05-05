@@ -1,0 +1,24 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: swim-ed254-provider-validator
+  labels:
+    app: swim-ed254-provider-validator
+    app.kubernetes.io/name: swim-ed254-provider-validator
+    app.kubernetes.io/component: ed254-provider-validator
+    app.kubernetes.io/part-of: swim-ed254
+    app.kubernetes.io/singleton: "true"
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: swim-ed254-provider-validator
+  minReplicas: 1
+  maxReplicas: 1
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 80
