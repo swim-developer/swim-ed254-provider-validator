@@ -48,32 +48,13 @@ Test profile uses H2 in-memory database (`%test` in application.properties) — 
 
 Hexagonal (ports & adapters) with three layers. Java 21, Quarkus, Vert.x Proton (AMQP), MariaDB/Hibernate.
 
-### Domain Layer (`domain/`)
+### Layers
 
-Port interfaces only — no business logic.
-
-- **Inbound ports** (`domain/port/in/`): `ConnectionTrackerPort`, `ConformanceTestPort`, `ConformanceHttpPort`, `MessagePersistencePort`, `MessagePort`, `ProviderSubscriptionPort`, `ConsoleNotificationPort`, `TestScenarioPort`
-- **Outbound port** (`domain/port/out/`): `ReceivedMessageRepository`
-- **Models** (`domain/model/`): `ReceivedMessage`, `ArrivalSequenceEvent`, `HttpResult`, `MessageData`
-
-### Application Layer (`application/usecase/`)
-
-Use cases that orchestrate domain ports:
-
-- `SubscriptionService` — reacts to subscription lifecycle (activated/paused/deleted), manages AMQP receivers via `ConnectionTrackerPort`
-- `ConformanceTestService` — executes ED-254 compliance test scenarios (API-01..04, DM-01..03, WFS-01) via `ConformanceHttpPort`
-- `MessageService` — persists incoming AMQP messages, extracts ED-254 ArrivalSequence metadata via `Ed254ArrivalSequenceExtractor`
-- `ConsoleService` — SSE broadcast for real-time UI feedback
-- `TestScenarioRegistry` — in-memory catalog of conformance test definitions
-
-### Infrastructure Layer (`infrastructure/`)
-
-Concrete adapters:
-
-- **REST** (`rest/`): `ProviderProxyResource` (proxies to real provider under `/api/provider/*`), `ApiResource` (config/health), `ConsoleResource` (SSE), `MessageResource`, `ConformanceTestResource`, `AmqpApiResource`
-- **Messaging** (`messaging/`): `UserReceiverLifecycle` (low-level AMQP via Vert.x Proton), `UserConnectionTracker` (connection state + heartbeat), `AmqpSslConfigurator` (mTLS for AMQP), `AmqpConnectionCleanupScheduler`
-- **Persistence** (`persistence/`): `ReceivedMessageRepositoryImpl` (Panache/JPA), `ReceivedMessageEntity`, `ReceivedMessageMapper`
-- **HTTP Clients** (`client/`): `ProviderHttpClient` (raw HTTP to provider), `ConformanceHttpClient` (adapts to domain `HttpResult`)
+```
+domain/           Port interfaces (inbound/outbound) + models (no business logic)
+application/      Use cases: subscription lifecycle, conformance testing, message persistence, SSE console
+infrastructure/   REST resources, AMQP messaging (Vert.x Proton), JPA persistence (Panache), HTTP clients
+```
 
 ### Key Data Flows
 
@@ -94,11 +75,6 @@ Override registry: `make jvm REGISTRY=quay.io/myorg TAG=v1.2.3`
 
 Helm chart under `src/main/helm/swim-ed254-provider-validator/`.
 
-## Non-Negotiable Rules (from project Cursor rules)
+## Key Rules
 
-- **No AI authorship**: never add `Co-Authored-By` or any AI tool reference to commits
-- **Test integrity**: never change production code to make tests pass — fix tests properly
-- **Deployment confirmation**: never execute `oc apply`/`oc create`/`oc delete` without explicit user confirmation
 - **Naming semantics**: every artifact name must be unambiguous and specific (e.g., `swim-ed254-provider-validator`, not `swim-validator`)
-- **Diagrams**: use Mermaid in markdown, never SVG references
-- **One instruction at a time**: never give multiple steps in a single message; wait for confirmation
